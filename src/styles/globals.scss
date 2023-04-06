@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --heading: #F8F8F8;
+  --body: #D7D7D7;
+  --info: #BBBBBB;
+
+  --highlight: #FF57B2;
+  --background: #1A1D23;
+}
+
+body {
+  background: var(--background);
+  color: var(--body);
+}
