@@ -33,50 +33,18 @@ export default function Home(): JSX.Element {
         <h1>Como utilizar Hooks</h1>
         <p>Pensando em sincronização em vez de ciclos de vida.</p>
         <div>
-          <RiCalendarLine />
-          <span>15 Mar 2021</span>
-        </div>
-        <div>
-          <FiUser />
-          <span>Joseph Oliveira</span>
-        </div>
-      </div>
-      <div>
-        <h1>Como utilizar Hooks</h1>
-        <p>Pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <RiCalendarLine />
-          <span>15 Mar 2021</span>
-        </div>
-        <div>
-          <FiUser />
-          <span>Joseph Oliveira</span>
+          <span>
+            <RiCalendarLine size={20} /> 15 Mar 2021
+          </span>
+          <span>
+            <FiUser size={20} /> Joseph Oliveira
+          </span>
         </div>
       </div>
-      <div>
-        <h1>Como utilizar Hooks</h1>
-        <p>Pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <RiCalendarLine />
-          <span>15 Mar 2021</span>
-        </div>
-        <div>
-          <FiUser />
-          <span>Joseph Oliveira</span>
-        </div>
-      </div>
-      <div>
-        <h1>Como utilizar Hooks</h1>
-        <p>Pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <RiCalendarLine />
-          <span>15 Mar 2021</span>
-        </div>
-        <div>
-          <FiUser />
-          <span>Joseph Oliveira</span>
-        </div>
-      </div>
+
+      <button type="button" className={styles.postButton}>
+        Carregar mais posts
+      </button>
     </section>
   );
 }

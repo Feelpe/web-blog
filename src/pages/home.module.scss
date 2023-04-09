@@ -1,3 +1,40 @@
 .post {
+  height: 108px;
+  margin-bottom: 3rem;
+
+  h1 {
+    font-size: 1.75rem;
+    color: var(--heading);
+  }
+
+  p {
+    padding: 8px 0;
+    color: var(--body);
+  }
+
+  div {
+    padding-top: 1rem;
+    gap: 26px;
+    color: var(--info);
+
+    display: flex;
+    
+    span {
+      gap: 8px;
+      font-size: 14px;
   
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.postButton {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 1rem 0;
+  
+  color: var(--highlight);
+  background-color: transparent;
+  border: 0;
 }

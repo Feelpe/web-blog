@@ -1,1 +1,38 @@
-// TODO
+.banner {
+  width: 100%;
+  margin-bottom: 80px;
+}
+
+.text {
+  h1 {
+    padding-bottom: 24px;
+
+    font-size: 3rem;
+    color: var(--heading);
+  }
+
+  div {
+    padding-bottom: 64px;
+    gap: 1.5rem;
+    color: var(--info);
+    display: flex;
+
+    span {
+      gap: 8px;
+      font-size: 14px;
+
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  p {
+    line-height: 25.2px;
+    color: var(--body);
+  }
+
+  h2 {
+    font-size: 26px;
+    color: var(--heading);
+  }
+}
