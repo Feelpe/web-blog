@@ -29,13 +29,13 @@ interface PostProps {
   post: Post;
 }
 
-export default function Post(): JSX.Element {
+export default function Post({ post }: PostProps): JSX.Element {
   return (
     <>
       <img src="/Banner.svg" alt="" className={styles.banner} />
       <section className={commonStyles.container}>
         <div className={styles.text}>
-          <h1>Criando um app CRA do zero</h1>
+          <h1>{post.data.title}</h1>
           <div>
             <span>
               <RiCalendarLine size={20} /> 15 Mar 2021
