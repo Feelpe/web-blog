@@ -29,7 +29,7 @@ interface PostProps {
   post: Post;
 }
 
-export default function Post({ post }: PostProps): JSX.Element {
+export default function Post({ post }: PostProps) {
   return (
     <>
       <img src="/Banner.svg" alt="" className={styles.banner} />

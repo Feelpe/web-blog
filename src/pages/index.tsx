@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next';
 import { RiCalendarLine } from 'react-icons/ri';
+import Prismic from '@prismicio/client';
 import { FiUser } from 'react-icons/fi';
 
 import { getPrismicClient } from '../services/prismic';
@@ -26,7 +27,7 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home(): JSX.Element {
+export default function Home({ postsPagination }: HomeProps) {
   return (
     <section className={commonStyles.container}>
       <div className={styles.post}>
@@ -49,9 +50,32 @@ export default function Home(): JSX.Element {
   );
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient({});
-//   // const postsResponse = await prismic.getByType(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
 
-//   // TODO
-// };
+  const postsResponse = await prismic.query(
+    [Prismic.predicates.at('document.type', 'blogPosts')],
+    {
+      fetch: ['blogPosts.title', 'blogPosts.description'],
+      pageSize: 100,
+    }
+  );
+
+  console.log(JSON.stringify(postsResponse, null, 2));
+
+  const posts = postsResponse.results.map(post => {
+    return {
+      uid: post.data.uid,
+      first_publication_date: post.first_publication_date,
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
+    };
+  });
+
+  return {
+    props: {},
+  };
+};
