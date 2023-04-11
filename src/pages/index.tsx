@@ -1,6 +1,8 @@
 import { GetStaticProps } from 'next';
 import { RiCalendarLine } from 'react-icons/ri';
 import Prismic from '@prismicio/client';
+import ptBR from 'date-fns/locale/pt-BR';
+import { format } from 'date-fns';
 import { FiUser } from 'react-icons/fi';
 
 import { getPrismicClient } from '../services/prismic';
@@ -30,18 +32,22 @@ interface HomeProps {
 export default function Home({ postsPagination }: HomeProps) {
   return (
     <section className={commonStyles.container}>
-      <div className={styles.post}>
-        <h1>Como utilizar Hooks</h1>
-        <p>Pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <span>
-            <RiCalendarLine size={20} /> 15 Mar 2021
-          </span>
-          <span>
-            <FiUser size={20} /> Joseph Oliveira
-          </span>
+      {postsPagination.results.map(post => (
+        <div className={styles.post}>
+          <h1>{post.data.title}</h1>
+          <p>{post.data.subtitle}</p>
+          <div>
+            <span>
+              <RiCalendarLine size={20} />
+              {post.first_publication_date}
+            </span>
+            <span>
+              <FiUser size={20} />
+              {post.data.author}
+            </span>
+          </div>
         </div>
-      </div>
+      ))}
 
       <button type="button" className={styles.postButton}>
         Carregar mais posts
@@ -53,20 +59,22 @@ export default function Home({ postsPagination }: HomeProps) {
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
 
-  const postsResponse = await prismic.query(
-    [Prismic.predicates.at('document.type', 'blogPosts')],
-    {
-      fetch: ['blogPosts.title', 'blogPosts.description'],
-      pageSize: 100,
-    }
-  );
+  const postsResponse = await prismic.query([
+    Prismic.predicates.at('document.type', 'blogposts'),
+  ]);
 
-  console.log(JSON.stringify(postsResponse, null, 2));
+  // console.log(JSON.stringify(postsResponse, null, 2));
+
+  const { next_page } = postsResponse;
 
   const posts = postsResponse.results.map(post => {
     return {
-      uid: post.data.uid,
-      first_publication_date: post.first_publication_date,
+      uid: post.uid,
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        'd LLL uuu',
+        { locale: ptBR }
+      ),
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -76,6 +84,11 @@ export const getStaticProps: GetStaticProps = async () => {
   });
 
   return {
-    props: {},
+    props: {
+      postsPagination: {
+        next_page,
+        results: posts,
+      },
+    },
   };
 };
