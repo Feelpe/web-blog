@@ -26,13 +26,18 @@
     }
   }
 
+  h2 {
+    margin-bottom: 36px;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 50px;
+    color: var(--heading);
+  }
+
   p {
+    margin-bottom: 36px;
     line-height: 25.2px;
     color: var(--body);
   }
 
-  h2 {
-    font-size: 26px;
-    color: var(--heading);
-  }
 }

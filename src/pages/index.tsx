@@ -4,6 +4,7 @@ import Prismic from '@prismicio/client';
 import ptBR from 'date-fns/locale/pt-BR';
 import { format } from 'date-fns';
 import { FiUser } from 'react-icons/fi';
+import Link from 'next/link';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -31,28 +32,32 @@ interface HomeProps {
 
 export default function Home({ postsPagination }: HomeProps) {
   return (
-    <section className={commonStyles.container}>
+    <main className={commonStyles.container}>
       {postsPagination.results.map(post => (
-        <div className={styles.post}>
-          <h1>{post.data.title}</h1>
-          <p>{post.data.subtitle}</p>
-          <div>
-            <span>
-              <RiCalendarLine size={20} />
-              {post.first_publication_date}
-            </span>
-            <span>
-              <FiUser size={20} />
-              {post.data.author}
-            </span>
-          </div>
-        </div>
+        <Link key={post.uid} href={`/post/${post.uid}`}>
+          <a>
+            <section className={styles.post}>
+              <h1>{post.data.title}</h1>
+              <p>{post.data.subtitle}</p>
+              <div>
+                <span>
+                  <RiCalendarLine size={20} />
+                  {post.first_publication_date}
+                </span>
+                <span>
+                  <FiUser size={20} />
+                  {post.data.author}
+                </span>
+              </div>
+            </section>
+          </a>
+        </Link>
       ))}
 
       <button type="button" className={styles.postButton}>
         Carregar mais posts
       </button>
-    </section>
+    </main>
   );
 }
 
