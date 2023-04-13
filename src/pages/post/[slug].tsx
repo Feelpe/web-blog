@@ -1,12 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
-import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import { RiCalendarLine } from 'react-icons/ri';
 import { FiUser } from 'react-icons/fi';
 import { MdOutlineWatchLater } from 'react-icons/md';
 
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
-import { RichText } from 'prismic-dom';
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
@@ -14,6 +13,7 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  reading_time: string | null;
   data: {
     title: string;
     banner: {
@@ -51,7 +51,7 @@ export default function Post({ post }: PostProps) {
             </span>
             <span>
               <MdOutlineWatchLater size={20} />
-              {post.first_publication_date}
+              {post.reading_time} min
             </span>
           </div>
 
@@ -83,12 +83,28 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   // console.log(JSON.stringify(response, null, 2));
 
+  const wordRegex = /\w+/g; // regex para buscar apenas palavras
+
+  const totalWords = response.data.content.reduce((acc, curr) => {
+    const headingText = curr.heading ? curr.heading : '';
+    const headingWords = headingText.match(wordRegex).length;
+
+    const bodyText =
+      curr.body.find(body => body.type === 'paragraph')?.text ?? '';
+    const bodyWords = bodyText.match(wordRegex).length;
+
+    return acc + (headingWords + bodyWords);
+  }, 0);
+
+  const estimatedReadingTime = Math.ceil(totalWords / 200);
+
   const post = {
     first_publication_date: format(
       new Date(response.first_publication_date),
       'd LLL uuu',
       { locale: ptBR }
     ),
+    reading_time: estimatedReadingTime,
     data: {
       title: response.data.title,
       banner: {
@@ -106,6 +122,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       }),
     },
   };
+
+  // console.log(JSON.stringify(post.reading_time, null, 2));
 
   return {
     props: {
