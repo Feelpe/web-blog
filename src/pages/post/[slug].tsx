@@ -1,10 +1,11 @@
+import { useRouter } from 'next/router';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { RichText } from 'prismic-dom';
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+import { useEffect, useState } from 'react';
 import { RiCalendarLine } from 'react-icons/ri';
 import { FiUser } from 'react-icons/fi';
 import { MdOutlineWatchLater } from 'react-icons/md';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
 import { getPrismicClient } from '../../services/prismic';
 
@@ -34,6 +35,17 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [router.isFallback]);
+
+  if (router.isFallback || isLoading) {
+    return <p>Carregando...</p>;
+  }
+
   return (
     <>
       <img src="/Banner.svg" alt="" className={styles.banner} />
@@ -67,10 +79,12 @@ export default function Post({ post }: PostProps) {
   );
 }
 
-export const getStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [],
-    fallback: 'blocking',
+    paths: [
+      { params: { slug: 'boas-praticas-para-devs-em-inicio-de-carreira' } },
+    ],
+    fallback: true,
   };
 };
 
@@ -129,5 +143,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       post,
     },
+    redirect: 60 * 30, // 30 minutos
   };
 };
