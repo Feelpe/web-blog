@@ -1,10 +1,11 @@
 import { GetStaticProps } from 'next';
-import { RiCalendarLine } from 'react-icons/ri';
+import Link from 'next/link';
+import { useState } from 'react';
 import Prismic from '@prismicio/client';
 import ptBR from 'date-fns/locale/pt-BR';
 import { format } from 'date-fns';
+import { RiCalendarLine } from 'react-icons/ri';
 import { FiUser } from 'react-icons/fi';
-import Link from 'next/link';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -31,9 +32,22 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps) {
+  const { next_page, results } = postsPagination;
+  const [posts, setPosts] = useState(results);
+  const [nextPageLink, setNextPageLink] = useState(next_page);
+
+  const loadMorePosts = async e => {
+    e.preventDefault();
+
+    const response = await fetch(nextPageLink);
+    const json = await response.json();
+    setPosts(posts.concat(json.results));
+    setNextPageLink(json.next_page);
+  };
+
   return (
     <main className={commonStyles.container}>
-      {postsPagination.results.map(post => (
+      {posts.map(post => (
         <Link key={post.uid} href={`/post/${post.uid}`}>
           <a>
             <section className={styles.post}>
@@ -44,19 +58,27 @@ export default function Home({ postsPagination }: HomeProps) {
                   <RiCalendarLine size={20} />
                   {post.first_publication_date}
                 </span>
-                <span>
-                  <FiUser size={20} />
-                  {post.data.author}
-                </span>
+                {!post.data.author === false && (
+                  <span>
+                    <FiUser size={20} />
+                    {post.data.author}
+                  </span>
+                )}
               </div>
             </section>
           </a>
         </Link>
       ))}
 
-      <button type="button" className={styles.postButton}>
-        Carregar mais posts
-      </button>
+      {!postsPagination.next_page === false && (
+        <button
+          type="button"
+          className={styles.postButton}
+          onClick={loadMorePosts}
+        >
+          Carregar mais posts
+        </button>
+      )}
     </main>
   );
 }
@@ -64,15 +86,18 @@ export default function Home({ postsPagination }: HomeProps) {
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
 
-  const postsResponse = await prismic.query([
+  const postsResponse = await prismic.query(
     Prismic.predicates.at('document.type', 'blogposts'),
-  ]);
+    { pageSize: 5 }
+  );
 
   // console.log(JSON.stringify(postsResponse, null, 2));
 
-  const { next_page } = postsResponse;
+  const { results, next_page } = postsResponse;
 
-  const posts = postsResponse.results.map(post => {
+  // console.log(next_page);
+
+  const posts = results.map(post => {
     return {
       uid: post.uid,
       first_publication_date: format(
